@@ -6,6 +6,8 @@ var Switchmate3Device = SwitchMate.Switchmate3Device;
 const switchmate_A = 'c847a87153c5';
 const switchmate_B = 'e9ee7459a8f2';
 
+var devices = [];
+
 function createTestSession()
 {
     console.log('Finding ' + switchmate_A + '.');
@@ -13,6 +15,14 @@ function createTestSession()
 
     console.log('Finding ' + switchmate_B + '.');
     Switchmate3Device.discoverById(switchmate_B, onFound);
+}
+
+function isSwitchOn() {
+    devices.forEach(function(device) {
+        device.isOn(function (status) {
+            console.log(device.id + status);
+        })
+    });
 }
 
 /*
@@ -50,7 +60,8 @@ function onFound(Switchmate3)
 function onFound(Switchmate3)
 {
     console.log('found');
-    var targetState = process.argv[3];
+    devices.add(Switchmate3);
+
     var ToggleMode = Switchmate3.ToggleMode();
 
     ToggleMode.event.on('msg', function (msg)
@@ -58,7 +69,7 @@ function onFound(Switchmate3)
         console.log(msg);
     }); //set event listener for logging.
 
-    ToggleMode.event.on('success',onSuccess);
+    ToggleMode.event.on('success',isSwitchOn);
     ToggleMode.event.on('fail', onFail);
 
     if (targetState === 'identify')
